@@ -1,5 +1,4 @@
 -module(rudy).
--export([init/1, reply/1]).
 -export([start/1, stop/0]).
 
 start(Port) ->
@@ -40,7 +39,7 @@ request(Client) ->
   end,
   gen_tcp:close(Client).
 
-reply({{get, URI, _}, _, Body}) ->
+reply({{get, URI, _}, _, _}) ->
   %io:format("Request received for ~s~n", [URI]),
   timer:sleep(40),
-  http:ok(Body).
+  http:ok(URI).
