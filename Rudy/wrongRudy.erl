@@ -1,4 +1,4 @@
--module(rudy).
+-module(wrongRudy).
 -export([start/1, start/2, stop/0]).
 
 % Starts the server
@@ -46,7 +46,8 @@ checkHandlers(NbHandlers) ->
       receive
         done ->
           checkHandlers(NbHandlers-1)
-      end.
+      end,
+  end.
 
 % Handles the connection
 handler(Listen, Pid) ->
@@ -73,7 +74,7 @@ request(Client) ->
   gen_tcp:close(Client).
 
 % Replies to the client
-reply({{get, URI, _}, _, Body}) ->
+reply({{get, URI, _}, _, _}) ->
   %io:format("Request received for ~s~n", [URI]),
   timer:sleep(40),
-  http:ok(Body).
+  http:ok(URI).
