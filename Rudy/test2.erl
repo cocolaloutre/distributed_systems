@@ -15,8 +15,6 @@ bench(Host, Port, C, N) ->
     T = timer:now_diff(Finish, Start),
     io:format(" ~wx~w requests in ~w ms~n", [C,N, (T div 1000)]).
 
-    
-
 
 parallel(0, _, _, _, _) ->
     ok;
@@ -32,8 +30,8 @@ report(N, Host, Port, Ctrl) ->
 
 collect(0) ->
     ok;
-collect(N) ->    
-    receive 
+collect(N) ->
+    receive
 	ok ->
 	    collect(N-1)
     end.
@@ -45,9 +43,6 @@ run(N, Host, Port) ->
     request(Host, Port),
     %%dummy(Host, Port),
     run(N-1, Host, Port).
-
-dummy(_, _) ->
-     ok.
 
 
 request(Host, Port) ->
@@ -61,7 +56,3 @@ request(Host, Port) ->
      	    io:format("test: error: ~w~n", [Error])
     end,
     gen_tcp:close(Server).
-    
-    
-
-
