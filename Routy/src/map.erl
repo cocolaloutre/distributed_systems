@@ -11,9 +11,9 @@ new() ->
 % Adds an element to the map (if there's already an element for the same node,
 % updates its links)
 add(Elem, Map) ->
-  This_node = lists:keyfind(element(1, Elem), 1, Map),
+  This_elem = lists:keyfind(element(1, Elem), 1, Map),
   if
-    This_node == false ->
+    This_elem == false ->
       lists:append(Map, [Elem]);
     true ->
       update(element(1, Elem), element(2, Elem), Map)
