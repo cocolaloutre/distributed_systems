@@ -1,5 +1,5 @@
 -module(dijkstra).
--export([entry/2, replace/4, sort_list/1]).
+-export([entry/2, replace/4, update/4, sort_list/1]).
 
 % entry(Node, Sorted_list) ->
 %   This_elem = lists:keyfind(Node, 1, Sorted_list),
@@ -69,4 +69,16 @@ replace(Node, N, Gateway, Sorted_list) ->
     true ->
       New_list = lists:keydelete(Node, 1, Sorted_list),
       sort_list(lists:append(New_list, [{Node, N, Gateway}]))
+  end.
+
+update(Node, N, Gateway, Sorted_list) ->
+  This_elem = lists:keyfind(Node, 1, Sorted_list),
+  if
+    This_elem == false ->
+      io:format("Node ~w is not in the list.\n", [Node]);
+    N < element(2, This_elem) ->
+      New_list = lists:keydelete(Node, 1, Sorted_list),
+      sort_list(lists:append(New_list, [{Node, N, Gateway}]));
+    true ->
+      io:format("A shorter path to ~w exists.\n", [Node])
   end.
