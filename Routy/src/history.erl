@@ -13,7 +13,8 @@ add(Name, N, History) ->
 update(Node, N, History) ->
   case lists:keyfind(Node, 1, History) of
     false ->
-      lists:append(History, [{Node, N}]);
+      Updated = lists:append(History, [{Node, N}]),
+      {new, Updated};
     {_, Old_N} ->
       if
         N =< Old_N ->

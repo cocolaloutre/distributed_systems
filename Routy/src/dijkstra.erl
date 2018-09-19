@@ -140,7 +140,7 @@ table(Gateways, Map) ->
   Map
   ),
   Sorted_list = sort_list(Gateways_list ++ Map_list),
-  io:format("Sorted_list: ~w\n", [Sorted_list]),
+  %io:format("Sorted_list: ~w\n", [Sorted_list]),
   iterate(Sorted_list, Map, []).
 
 route(Node, Table) ->
