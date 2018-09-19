@@ -43,4 +43,9 @@ reachable(Node, Map) ->
 
 % Returns all the nodes, included the ones without outgoing links
 all_nodes(Map) ->
-  lists:usort(lists:flatmap(fun(Elem) -> [element(1, Elem)] ++ element(2, Elem) end, Map)).
+  lists:usort(
+    lists:flatmap(fun(Elem) ->
+      [element(1, Elem)] ++ element(2, Elem)
+    end,
+    Map)
+  ).
