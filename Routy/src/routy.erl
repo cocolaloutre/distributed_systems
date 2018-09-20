@@ -91,11 +91,11 @@ router(Name, N, History, Interfaces, Table, Map) ->
               io:format("Message passing through ~w\n", [Gateway]),
               Pid ! {route, To, From, Message};
             notfound ->
-              io:format("Message droped\n"),
+              io:format("Message dropped\n"),
               ok
           end;
         notfound ->
-          io:format("Message droped\n"),
+          io:format("Message dropped\n"),
           ok
       end,
       router(Name, N, History, Interfaces, Table, Map);
