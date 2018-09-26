@@ -16,12 +16,12 @@ init(Nodes) ->
 loop(Msg_queue, Clock) ->
   receive
     {log, From, Time, Msg} ->
-      io:format("\t{~w, ~w, ~p}\n", [From, Time, Msg]),
+      %io:format("\t{~w, ~w, ~p}\n", [From, Time, Msg]),
       Msgs = lists:keysort(2, lists:append(Msg_queue, [{From, Time, Msg}])),
       New_msg_queue = log_safe_msgs(Msgs, Clock),
-      io:format("\t\t  Msg_queue: ~w\n", [New_msg_queue]),
+      %io:format("\t\t  Msg_queue: ~w\n", [New_msg_queue]),
       New_clock = time:update(From, Time, Clock),
-      io:format("\t\tClock: ~w\n", [New_clock]),
+      %io:format("\t\tClock: ~w\n", [New_clock]),
       loop(New_msg_queue, New_clock);
     stop ->
       ok
