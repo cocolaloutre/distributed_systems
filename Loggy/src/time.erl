@@ -1,6 +1,6 @@
 -module(time).
--import(lists, [map/2, keyfind/3, keydelete/3, append/2]).
--export([zero/0, inc/2, merge/2, leq/2, clock/1, update/3, safe/3]).
+-import(lists, [map/2, keyfind/3, keydelete/3, append/2, any/2]).
+-export([zero/0, inc/2, merge/2, leq/2, clock/1, update/3, safe/2]).
 
 zero() ->
   0.
@@ -30,12 +30,10 @@ clock(Nodes) ->
 update(Node, Time, Clock) ->
   lists:keyreplace(Node, 1, Clock, {Node, Time}).
 
-safe(Time, Msg_queue, Clock) ->
+safe(Time, Clock) ->
   Min_time = lists:min([T || T <- [element(2, Elem) || Elem <- Clock]]),
   if
     Time > Min_time ->
-      false;
-    Time > length(Msg_queue) ->
       false;
     true ->
       true

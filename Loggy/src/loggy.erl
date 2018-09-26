@@ -17,21 +17,30 @@ loop(Msg_queue, Clock) ->
   receive
     {log, From, Time, Msg} ->
       io:format("\t{~w, ~w, ~p}\n", [From, Time, Msg]),
+      Msgs = lists:keysort(2, lists:append(Msg_queue, [{From, Time, Msg}])),
+      New_msg_queue = log_safe_msgs(Msgs, Clock),
+      io:format("\t\t  Msg_queue: ~w\n", [New_msg_queue]),
       New_clock = time:update(From, Time, Clock),
       io:format("\t\tClock: ~w\n", [New_clock]),
-      Msgs = lists:keysort(2, lists:append(Msg_queue, [{From, Time, Msg}])),
-      Head_msg = nth(1, Msgs),
-      case time:safe(element(2, Head_msg), Msgs, New_clock) of
-        false ->
-          New_msg_queue = Msgs;
-        true ->
-          log(element(1, Head_msg), element(2, Head_msg), element(3, Head_msg)),
-          New_msg_queue = lists:delete(Head_msg, Msgs)
-      end,
       loop(New_msg_queue, New_clock);
     stop ->
       ok
   end.
 
+log_safe_msgs(Msg_queue, Clock) ->
+  case Msg_queue of
+    [{From, Time, Msg} | Rest] ->
+      case time:safe(Time, Clock) of
+        false ->
+          Msg_queue;
+        true ->
+          log(From, Time, Msg),
+          log_safe_msgs(Rest, Clock)
+      end;
+    [] ->
+      []
+  end.
+
+
 log(From, Time, Msg) ->
-  io:format("log: ~w ~w ~p~n", [Time, From, Msg]).
+  io:format("\nlog: ~w ~w ~p\n\n", [Time, From, Msg]).
