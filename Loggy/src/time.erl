@@ -1,5 +1,5 @@
 -module(time).
--import(lists, [map/2, keyfind/3, keydelete/3, keyreplace/3, append/2, any/2]).
+-import(lists, [map/2, keyfind/3, keydelete/4, keyreplace/3, append/2, any/2]).
 -export([zero/0, inc/2, merge/2, leq/2, clock/1, update/3, safe/2]).
 
 zero() ->
