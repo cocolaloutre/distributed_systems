@@ -1,7 +1,7 @@
 -module(gms2).
 -export([start/1, start/2]).
 -define(timeout, 100).
--define(arghh, 1000).
+-define(arghh, 100).
 
 start(Id) ->
   Rnd = random:uniform(1000),
