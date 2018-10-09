@@ -23,7 +23,7 @@ between(Key, From, To) ->
           false
       end;
     Key == To ->
-      To;
+      true;
     true ->
       false
   end.
