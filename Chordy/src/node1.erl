@@ -20,7 +20,6 @@ init(Id, Peer) ->
 
 connect(Id, nil) ->
   {ok, {Id, self()}};
-
 connect(Id, Peer) ->
   Qref = make_ref(),
   Peer ! {key, Qref, self()},
@@ -28,7 +27,7 @@ connect(Id, Peer) ->
     {Qref, Skey} ->
       {ok, {Skey, Peer}}
     after ?Timeout ->
-      io:format("Time out: no response~n",[])
+      io:format("Node ~w: timeout, no response~n",[Id])
   end.
 
 node(Id, Predecessor, Successor) ->
@@ -86,10 +85,10 @@ stabilize(Pred, Id, Successor) ->
     {Skey, _} -> % our successor's predecessor is itself, so we notify it about us
       Spid ! {notify, {Id, self()}},
       Successor;
-    {Xkey, Xpid} -> % our successor's predecessor is another node
+    {Xkey, _} -> % our successor's predecessor is another node
       case key:between(Xkey, Id, Skey) of
         true -> % this node is between us and our successor
-          stabilize({Xkey, Xpid}),
+          self() ! stabilize,
           Pred;
         false -> % we should be between the node and our successor
           Spid ! {notify, {Id, self()}},
