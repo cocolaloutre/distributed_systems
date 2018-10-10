@@ -8,13 +8,13 @@
 %% Starting up a set of nodes is made easier using this function.
 
 start(Module) ->
-    Id = key:generate(), 
+    Id = key:generate(),
     apply(Module, start, [Id]).
 
 
 start(Module, P) ->
-    Id = key:generate(), 
-    apply(Module, start, [Id,P]).    
+    Id = key:generate(),
+    apply(Module, start, [Id,P]).
 
 start(_, 0, _) ->
     ok;
@@ -22,12 +22,24 @@ start(Module, N, P) ->
     start(Module, P),
     start(Module, N-1, P).
 
+start_nodes(Module, N) ->
+  P = apply(Module, start, [N]),
+  start_nodes(Module, N-1, P).
+start_nodes(Module, N, P) ->
+  case N of
+    0 ->
+      ok;
+    N ->
+      apply(Module, start, [N, P]),
+      start_nodes(Module, N-1, P)
+  end.
+
 %% The functions add and lookup can be used to test if a DHT works.
 
 add(Key, Value , P) ->
     Q = make_ref(),
     P ! {add, Key, Value, Q, self()},
-    receive 
+    receive
 	{Q, ok} ->
 	   ok
 	after ?Timeout ->
@@ -37,7 +49,7 @@ add(Key, Value , P) ->
 lookup(Key, Node) ->
     Q = make_ref(),
     Node ! {lookup, Key, Q, self()},
-    receive 
+    receive
 	{Q, Value} ->
 	    Value
     after ?Timeout ->
@@ -49,7 +61,7 @@ lookup(Key, Node) ->
 %% key. In order to use it you need to implement a store.
 
 keys(N) ->
-    lists:map(fun(_) -> key:generate() end, lists:seq(1,N)).
+    lists:map(fun(_) -> key:generate(rand:uniform(1000)) end, lists:seq(1,N)).
 
 add(Keys, P) ->
     lists:foreach(fun(K) -> add(K, gurka, P) end, Keys).
@@ -67,21 +79,10 @@ check([], _, Failed, Timeout) ->
     {Failed, Timeout};
 check([Key|Keys], P, Failed, Timeout) ->
     case lookup(Key,P) of
-	{Key, _} -> 
+	{Key, _} ->
 	    check(Keys, P, Failed, Timeout);
-	{error, _} -> 
+	{error, _} ->
 	    check(Keys, P, Failed, Timeout+1);
 	false ->
 	    check(Keys, P, Failed+1, Timeout)
     end.
-
-
-    
-
-
-
-
-
-
-
-

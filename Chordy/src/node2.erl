@@ -15,7 +15,7 @@ init(Id, Peer) ->
   Predecessor = nil,
   {ok, Successor} = connect(Id, Peer),
   schedule_stabilize(),
-  node(Id, Predecessor, Successor, []).
+  node(Id, Predecessor, Successor, storage:create()).
 
 connect(Id, nil) ->
   {ok, {Id, self()}};
@@ -36,8 +36,8 @@ node(Id, Predecessor, Successor, Store) ->
       Peer ! {Qref, Id},
       node(Id, Predecessor, Successor, Store);
     {notify, New} ->
-      Pred = notify(New, Id, Predecessor, Store),
-      node(Id, Pred, Successor, Store);
+      {Pred, Keep} = notify(New, Id, Predecessor, Store),
+      node(Id, Pred, Successor, Keep);
     {request, Peer} ->
       request(Peer, Predecessor),
       node(Id, Predecessor, Successor, Store);
@@ -117,15 +117,15 @@ request(Peer, Predecessor) ->
 notify({Nkey, Npid}, Id, Predecessor, Store) ->
   case Predecessor of
     nil ->
-      handover(Id, Store, Nkey, Npid),
-      {Nkey, Npid};
+      Keep = handover(Id, Store, Nkey, Npid),
+      {{Nkey, Npid}, Keep};
     {Pkey, _} ->
       case key:between(Nkey, Pkey, Id) of
         true ->
-          handover(Id, Store, Nkey, Npid),
-          {Nkey, Npid};
+          Keep = handover(Id, Store, Nkey, Npid),
+          {{Nkey, Npid}, Keep};
         false ->
-          Predecessor
+          {Predecessor, Store}
       end
   end.
 
@@ -164,6 +164,6 @@ lookup(Key, Qref, Client, Id, {Pkey, _}, {_, Spid}, Store) ->
   end.
 
 handover(Id, Store, Nkey, Npid) ->
-  {Keep, Rest} = storage:split(Id, Nkey, Store),
+  {Keep, Rest} = storage:split(Nkey, Id, Store),
   Npid ! {handover, Rest},
   Keep.

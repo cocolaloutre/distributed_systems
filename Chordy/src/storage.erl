@@ -11,8 +11,8 @@ lookup(Key, Store) ->
   lists:keyfind(Key, 1, Store).
 
 split(From, To, Store) ->
-  lists:splitwith(
-    fun(Key) ->
+  lists:partition(
+    fun({Key, _}) ->
       key:between(Key, From, To)
     end,
     Store
