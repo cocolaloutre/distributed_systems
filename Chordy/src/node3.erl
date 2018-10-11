@@ -156,7 +156,7 @@ add(Key, Value, Qref, Client, Id, {Pkey, _, _}, {_, _, Spid}, Store) ->
   case key:between(Key, Pkey, Id) of
     true ->
       Client ! {Qref, ok},
-      Store ++ [{Key, Value}];
+      storage:add(Key, Value, Store);
     false ->
       Spid ! {add, Key, Value, Qref, Client},
       Store

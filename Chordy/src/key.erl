@@ -17,7 +17,7 @@ between(Key, From, To) ->
     To > From ->
       (Key > From) and (Key =< To);
     From > To ->
-      (Key > From) or (Key < To);
+      (Key > From) or (Key =< To);
     true ->
       false
   end.

@@ -7,14 +7,13 @@ start(Id) ->
   start(Id, nil).
 
 start(Id, Peer) ->
-  io:format("New node ~w\n", [Id]),
   timer:start(),
   spawn(fun() -> init(Id, Peer) end).
 
 init(Id, Peer) ->
+  io:format("New node ~w, pid: ~w\n", [Id, self()]),
   Predecessor = nil,
   {ok, Successor} = connect(Id, Peer),
-  io:format("Successor: ~w\n", [Successor]),
   schedule_stabilize(),
   node(Id, Predecessor, Successor).
 
